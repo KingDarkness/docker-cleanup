@@ -12,6 +12,8 @@ flock -n 9 || {
   exit 0
 }
 
+: >"$LOG"
+
 {
   echo "=================================================="
   echo "$(date -Is) $(hostname) docker cleanup start"
@@ -24,8 +26,8 @@ flock -n 9 || {
   # Chỉ xóa image dangling, không dùng -a
   docker image prune -f
 
-  # Giữ build cache 7 ngày gần nhất
-  docker builder prune -f --filter until=168h
+  # Giữ build cache 2 ngày gần nhất
+  docker builder prune -f --filter until=48h
 
   echo "--- after ---"
   docker system df

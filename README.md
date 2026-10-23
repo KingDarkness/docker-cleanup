@@ -58,6 +58,32 @@ Xóa các dòng cron cũ nếu có:
 0 0 * * * /bin/bash /root/registry/clean-old-image.sh
 ```
 
+Tạo file cron:
+
+Nội dung:
+
+```cron
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MAILTO=""
+
+# Dọn Docker hàng ngày
+0 2 * * * root /bin/bash /root/scripts/docker-cleanup.sh
+
+# GC registry hàng ngày, tách giờ với cleanup và deploy
+30 3 * * * root /bin/bash /root/registry/clean-old-image.sh
+```
+
+
+## Log
+
+Mỗi script ghi cố định vào một file log riêng:
+
+- `/var/log/docker-cleanup.log`
+- `/var/log/registry-gc.log`
+
+Log được ghi đè mỗi lần chạy, chỉ giữ kết quả lần chạy cuối cùng. Không cần logrotate hay xóa log thủ công.
+
 ## Nguyên tắc an toàn
 
 - `docker-cleanup.sh` chỉ xóa container dừng, image dangling và build cache cũ.
@@ -75,5 +101,5 @@ docker system df
 - Nếu build cache vẫn lớn, giảm thời gian giữ cache:
 
 ```bash
-docker builder prune -f --filter until=72h
+docker builder prune -f --filter until=24h
 ```

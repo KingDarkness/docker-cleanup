@@ -14,6 +14,8 @@ flock -n 9 || {
   exit 0
 }
 
+: >"$LOG"
+
 CONTAINER=$(/usr/bin/docker ps -q -f "name=${CONTAINER_NAME}")
 CONTAINER=${CONTAINER%%$'\n'*}
 
